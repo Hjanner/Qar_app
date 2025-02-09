@@ -1,6 +1,7 @@
 class Vehicle {
   final String plateNumber; // Número de placa
   final String ownerName;   // Nombre del propietario
+  final String ownerPhone;   // Nombre del propietario
   final String vehicleType; // Tipo de vehículo (auto, moto, camión, etc.)
   final String color;       // Color del vehículo
   final DateTime entryDate; // Fecha de entrada
@@ -9,6 +10,7 @@ class Vehicle {
   Vehicle({
     required this.plateNumber,
     required this.ownerName,
+    required this.ownerPhone,
     required this.vehicleType,
     required this.color,
     required this.entryDate,
@@ -20,6 +22,7 @@ class Vehicle {
     return {
       'plateNumber': plateNumber,
       'ownerName': ownerName,
+      'ownerPhone': ownerPhone,
       'vehicleType': vehicleType,
       'color': color,
       'entryDate': entryDate.toIso8601String(),
@@ -32,6 +35,7 @@ class Vehicle {
     return Vehicle(
       plateNumber: map['plateNumber'] ?? '', // Valor predeterminado si es nulo
       ownerName: map['ownerName'] ?? '',     // Valor predeterminado si es nulo
+      ownerPhone: map['ownerPhone'] ?? '',     // Valor predeterminado si es nulo
       vehicleType: map['vehicleType'] ?? '', // Valor predeterminado si es nulo
       color: map['color'] ?? '',             // Valor predeterminado si es nulo
       entryDate: DateTime.parse(map['entryDate'] ?? DateTime.now().toIso8601String()), // Valor predeterminado si es nulo

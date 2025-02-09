@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qar/screens/access_records_screen.dart';
 import 'package:qar/screens/list-vehicles_screen.dart';
 import 'package:qar/screens/list-vehicles_screen.dart';
 import 'register_screen.dart';
@@ -34,7 +35,7 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ScanScreen(),
+                    builder: (context) => ScanScreen(),
                   ),
                 );
               },
@@ -52,6 +53,18 @@ class HomeScreen extends StatelessWidget {
               },
               child: const Text('Ver Vehículos Registrados'),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AccessRecordsScreen(),
+                  ),
+                );
+              },
+              child: const Text('Ver Registros de Acceso'),
+            ),            
           ],
         ),
       ),

@@ -37,8 +37,8 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
           final vehicle = vehicles[index];
           return ListTile(
             title: Text(vehicle.plateNumber),
-            subtitle: Text('Propietario: ${vehicle.ownerName}'),
-            trailing: Text(vehicle.vehicleType),
+            subtitle: Text('Propietario: ${vehicle.ownerName}\nTeléfono: ${vehicle.ownerPhone}'), // Combina los dos subtítulos en uno
+          trailing: Text(vehicle.vehicleType),
           );
         },
       ),

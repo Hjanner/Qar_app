@@ -12,6 +12,7 @@ class InitialDataService {
         Vehicle(
           plateNumber: 'ABC123',
           ownerName: 'Juan Pérez',
+          ownerPhone: '0000001',
           vehicleType: 'Auto',
           color: 'Rojo',
           entryDate: DateTime.now(),
@@ -20,6 +21,7 @@ class InitialDataService {
         Vehicle(
           plateNumber: 'XYZ789',
           ownerName: 'María López',
+          ownerPhone: '0000002',
           vehicleType: 'Moto',
           color: 'Negro',
           entryDate: DateTime.now(),
