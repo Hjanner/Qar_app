@@ -1,30 +1,30 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/vehicle_model.dart';
 import '../models/access_record_model.dart';
-import 'storage_service.dart';
+import '../services/storage_service.dart';
 
 class AccessRecordService {
-  // Validar si la placa está registrada
-  static Future<Vehicle?> validatePlateNumber(String plateNumber) async {
+  // Verificar si la placa está registrada
+  static Future<bool> isPlateRegistered(String plateNumber) async {
     final vehicles = await StorageService.loadVehicles();
-    try {
-      return vehicles.firstWhere(
-        (vehicle) => vehicle.plateNumber.toUpperCase() == plateNumber.toUpperCase(),
-      );
-    } catch (e) {
-      print('Error validating plate number: $e');
-      return null;
-    }
+    return vehicles.any((vehicle) => vehicle.plateNumber == plateNumber);
   }
 
-  // Registrar un acceso
-  static Future<void> registerAccess(Vehicle vehicle) async {
-    final records = await StorageService.loadAccessRecords();
-    records.add(AccessRecord(
-      plateNumber: vehicle.plateNumber,
-      ownerName: vehicle.ownerName,
+  // Registrar un acceso en la lista de registros
+  static Future<void> registerAccess(String plateNumber, String ownerName) async {
+    final accessRecords = await StorageService.loadAccessRecords();
+
+    // Crear un nuevo registro de acceso
+    final newAccessRecord = AccessRecord(
+      plateNumber: plateNumber,
+      ownerName: ownerName, // Valor predeterminado si es null
       accessTime: DateTime.now(),
-    ));
-    await StorageService.saveAccessRecords(records);
-    print('Access record saved for: ${vehicle.plateNumber}');
+    );
+
+    // Agregar el nuevo registro a la lista
+    accessRecords.add(newAccessRecord);
+
+    // Guardar la lista actualizada en el almacenamiento
+    await StorageService.saveAccessRecords(accessRecords);
   }
 }

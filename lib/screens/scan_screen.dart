@@ -1,16 +1,79 @@
-import 'dart:convert'; // Importa la librería para trabajar con JSON
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import '../models/vehicle_model.dart';
-import '../services/access_record_service.dart';
+import 'dart:convert'; // Para jsonDecode
+import '../services/access_record_service.dart'; // Importar el nuevo servicio
+import '../models/vehicle_model.dart'; // Para acceder a la clase Vehicle
 
-class ScanScreen extends StatefulWidget {
+class QrScannerScreen extends StatefulWidget {
+  const QrScannerScreen({super.key});
+
   @override
-  _ScanScreenState createState() => _ScanScreenState();
+  _QrScannerScreenState createState() => _QrScannerScreenState();
 }
 
-class _ScanScreenState extends State<ScanScreen> {
+class _QrScannerScreenState extends State<QrScannerScreen> {
   MobileScannerController cameraController = MobileScannerController();
+  bool isScanning = false;
+  String scannedPlate = '';
+  String scannedOwnerName = '';
+
+  @override
+  void dispose() {
+    cameraController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _processScannedData(String scannedData) async {
+    try {
+      // Decodificar el JSON escaneado
+      final Map<String, dynamic> scannedVehicle = jsonDecode(scannedData);
+
+      // Extraer el número de placa y el nombre del propietario
+      final String plateNumber = scannedVehicle['plateNumber'] ?? 'Desconocido';
+      final String ownerName = scannedVehicle['ownerName'] ?? 'Desconocido'; // Valor predeterminado si es null
+
+      setState(() {
+        scannedPlate = plateNumber;
+        scannedOwnerName = ownerName;
+      });
+
+      // Verificar si la placa está registrada
+      final bool isRegistered = await AccessRecordService.isPlateRegistered(plateNumber);
+
+      if (isRegistered) {
+        // Registrar el acceso
+        await AccessRecordService.registerAccess(plateNumber, ownerName);
+
+        // Mostrar mensaje de acceso permitido
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Acceso permitido para $ownerName ($plateNumber).'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        // Mostrar mensaje de acceso denegado
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Acceso denegado. La placa $plateNumber no está registrada.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      // Manejar errores de decodificación JSON
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al procesar el código QR: $e'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    } finally {
+      setState(() {
+        isScanning = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,54 +81,44 @@ class _ScanScreenState extends State<ScanScreen> {
       appBar: AppBar(
         title: const Text('Escanear QR'),
       ),
-      body: MobileScanner(
-        controller: cameraController,
-        onDetect: (capture) async {
-          final List<Barcode> barcodes = capture.barcodes;
-          for (final barcode in barcodes) {
-            final String? data = barcode.rawValue; // Obtén el valor escaneado
-            if (data != null) {
-              print('Datos escaneados: $data'); // Depuración: Imprime los datos escaneados
+      body: Column(
+        children: [
+          Expanded(
+            child: MobileScanner(
+              controller: cameraController,
+              onDetect: (capture) {
+                final List<Barcode> barcodes = capture.barcodes;
+                for (final barcode in barcodes) {
+                  if (barcode.rawValue != null && !isScanning) {
+                    setState(() {
+                      isScanning = true;
+                    });
 
-              try {
-                // Intenta parsear el JSON
-                String jsonString = data.replaceAll("'", '"'); // Reemplaza comillas simples por dobles
-                jsonString = jsonString.replaceAll(": ", ":"); // Elimina espacios después de los dos puntos
-                jsonString = jsonString.replaceAll(", ", ","); // Elimina espacios después de las comas
-
-                final Map<String, dynamic> jsonData = jsonDecode(jsonString);
-
-                // Accede a los campos del JSON de manera segura
-                final String plateNumber = jsonData['plateNumber'] ?? 'Desconocido';
-                print('Placa escaneada: $plateNumber'); // Depuración: Imprime la placa escaneada
-
-                // Validar si la placa está registrada
-                final vehicle = await AccessRecordService.validatePlateNumber(plateNumber);
-                if (vehicle != null) {
-                  // Registrar el acceso del vehículo
-                  await AccessRecordService.registerAccess(vehicle);
-
-                  // Mostrar mensaje de acceso permitido
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Acceso permitido: ${vehicle.ownerName} - ${vehicle.plateNumber}')),
-                  );
-                } else {
-                  // Mostrar mensaje de acceso denegado
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Acceso denegado: Placa no registrada')),
-                  );
+                    _processScannedData(barcode.rawValue!);
+                  }
                 }
-              } catch (e) {
-                // Manejar errores de parseo o validación
-                print('Error parsing JSON: $e');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Error al escanear el código QR')),
-                );
-              }
-            }
-          }
-        },
-      
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Text(
+                  scannedPlate.isEmpty
+                      ? 'Escanea un código QR'
+                      : 'Placa escaneada: $scannedPlate',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                if (scannedOwnerName.isNotEmpty)
+                  Text(
+                    'Propietario: $scannedOwnerName',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,4 +1,5 @@
 import '../models/vehicle_model.dart';
+import '../models/access_record_model.dart';
 import 'storage_service.dart';
 
 class InitialDataService {
@@ -31,6 +32,24 @@ class InitialDataService {
 
       // Guardar vehículos de prueba
       await StorageService.saveVehicles(testVehicles);
+
+
+      //carga registros
+      final accessRecords = await StorageService.loadAccessRecords();
+      if(accessRecords.isEmpty){
+        // Guardar un registro de acceso
+        final accessRecord = AccessRecord(
+          plateNumber: 'ABC123',
+          ownerName: 'Juan Prueba',
+          accessTime: DateTime.now(),
+        );
+
+        await StorageService.saveAccessRecords([accessRecord]);
+
+        // Cargar registros de acceso
+        final accessRecords = await StorageService.loadAccessRecords();
+        print('Carga de prueba Registros de acceso cargados: ${accessRecords.length}');
+      }
     }
   }
 }

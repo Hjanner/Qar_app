@@ -41,3 +41,156 @@ android/gradle/wrapper/gradle-wrapper.properties
     validateDistributionUrl=true
     zipStoreBase=GRADLE_USER_HOME
     zipStorePath=wrapper/dists
+
+
+
+
+    import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:qar/services/access_record_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/vehicle_model.dart';
+import '../services/storage_service.dart';
+import 'dart:convert'; // Asegúrate de importar dart:convert para usar jsonDecode
+
+
+class QrScannerScreen extends StatefulWidget {
+  const QrScannerScreen({super.key});
+
+  @override
+  _QrScannerScreenState createState() => _QrScannerScreenState();
+}
+
+class _QrScannerScreenState extends State<QrScannerScreen> {
+  MobileScannerController cameraController = MobileScannerController();
+  bool isScanning = false;
+  String scannedPlate = '';
+
+  @override
+  void dispose() {
+    cameraController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _checkIfPlateIsRegistered(String scannedData) async {
+    try {
+      // Decodificar el JSON escaneado
+      final Map<String, dynamic> scannedVehicle = jsonDecode(scannedData);
+
+      // Extraer el número de placa del JSON
+      final String scannedPlateNumber = scannedVehicle['plateNumber'];
+      final String scannedOwnerName = scannedVehicle['ownerName'];
+
+      // Cargar la lista de vehículos registrados
+      final vehicles = await StorageService.loadVehicles();
+
+      // Imprimir para depuración
+      print('Último vehículo registrado: ${vehicles.last.plateNumber}');
+      print('Placa escaneada: $scannedPlateNumber');
+
+      // Verificar si la placa está registrada
+      final isRegistered = vehicles.any((vehicle) => vehicle.plateNumber == scannedPlateNumber);
+
+      if (isRegistered) {
+        //await AccessRecordService.registerAccess(scannedPlateNumber, scannedOwnerName);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('La placa $scannedPlateNumber ya está registrada.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('La placa $scannedPlateNumber no está registrada.')),
+        );
+      }
+    } catch (e) {
+      // Manejar errores de decodificación JSON
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al decodificar el código QR: $e')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Escanear QR'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: MobileScanner(
+              controller: cameraController,
+              onDetect: (capture) {
+                final List<Barcode> barcodes = capture.barcodes;
+                for (final barcode in barcodes) {
+                  if (barcode.rawValue != null && !isScanning) {
+                    setState(() {
+                      isScanning = true;
+                      scannedPlate = barcode.rawValue!;
+                    });
+
+                    _checkIfPlateIsRegistered(scannedPlate).then((_) {
+                      setState(() {
+                        isScanning = false;
+                      });
+                    });
+                  }
+                }
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              scannedPlate.isEmpty ? 'Escanea un código QR' : 'Placa escaneada: $scannedPlate',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/vehicle_model.dart';
+import '../models/access_record_model.dart';
+import '../services/storage_service.dart';
+
+class AccessRecordService {
+  // Registrar un acceso en la lista de registros
+  static Future<void> registerAccess(String plateNumber, String ownerName) async {
+    final accessRecords = await StorageService.loadAccessRecords();
+
+    // Crear un nuevo registro de acceso
+    final newAccessRecord = AccessRecord(
+      plateNumber: plateNumber,
+      ownerName: ownerName,
+      accessTime: DateTime.now(),
+    );
+
+    // Agregar el nuevo registro a la lista
+    accessRecords.add(newAccessRecord);
+
+    // Guardar la lista actualizada en el almacenamiento
+    await StorageService.saveAccessRecords(accessRecords);
+  }
+}
+
+
+
+
+  // Guardar un registro de acceso
+  final accessRecord = AccessRecord(
+    plateNumber: 'ABC123',
+    ownerName: 'Juan Pérez',
+    accessTime: DateTime.now(),
+  );
+
+  await StorageService.saveAccessRecords([accessRecord]);
+
+  // Cargar registros de acceso
+  final accessRecords = await StorageService.loadAccessRecords();
+  print('Registros de acceso cargados: ${accessRecords.length}');

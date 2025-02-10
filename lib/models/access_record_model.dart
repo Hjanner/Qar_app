@@ -19,9 +19,9 @@ class AccessRecord {
 
   factory AccessRecord.fromMap(Map<String, dynamic> map) {
     return AccessRecord(
-      plateNumber: map['plateNumber'],
-      ownerName: map['ownerName'],
-      accessTime: DateTime.parse(map['accessTime']),
+      plateNumber: map['plateNumber'] ?? 'Desconocido', // Valor predeterminado si es nulo
+      ownerName: map['ownerName'] ?? 'Desconocido',     // Valor predeterminado si es nulo
+      accessTime: DateTime.parse(map['accessTime'] ?? DateTime.now().toIso8601String()), // Valor predeterminado si es nulo
     );
   }
 }

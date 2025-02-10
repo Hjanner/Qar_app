@@ -61,7 +61,7 @@ class StorageService {
           final value = keyValue[1].trim().replaceAll("'", "").replaceAll('"', '');
 
           // Manejar valores nulos o vacíos
-          if (value.isEmpty) {
+          if (value.isEmpty || value == 'null') {
             map[key] = null;
           } else {
             map[key] = value;

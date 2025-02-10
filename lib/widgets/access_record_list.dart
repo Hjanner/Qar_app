@@ -3,7 +3,6 @@ import '../models/access_record_model.dart';
 
 //muestra los registros de acceso en listas desplegables organizadas por día.
 
-
 class AccessRecordList extends StatelessWidget {
   final List<AccessRecord> records;
 
