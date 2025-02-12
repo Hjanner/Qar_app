@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../widgets/vehicle_qr_details .dart';
+import '../../widgets/vehicle_qr_details .dart';
 import '/models/vehicle_model.dart';
 
-class QrScreen extends StatelessWidget {
+class VehicleDetailScreen extends StatelessWidget {
   final Vehicle vehicle;
 
-  const QrScreen({super.key, required this.vehicle});
+  const VehicleDetailScreen({super.key, required this.vehicle});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class QrScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Código QR',
+                      'Detalles del Vehículo',
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                             color: Colors.blue.shade700,
                             fontWeight: FontWeight.bold,
@@ -50,7 +50,7 @@ class QrScreen extends StatelessWidget {
               Expanded(
                 child: VehicleQrDetails(
                   vehicle: vehicle,
-                  showSaveButton: true,
+                  showSaveButton: true, // No mostrar el botón de guardar en esta pantalla
                 ),
               ),
             ],
