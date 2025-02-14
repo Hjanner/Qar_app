@@ -26,14 +26,14 @@ class HomeScreen extends StatelessWidget {
             children: [
               // Logo section (30% of screen)
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.35,
+                height: MediaQuery.of(context).size.height * 0.4,
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 120,
-                        height: 120,
+                        width: 180,
+                        height: 180,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
@@ -49,8 +49,8 @@ class HomeScreen extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Image.asset(
-                                './assets/imagenes/google2.png',
-                              fit: BoxFit.contain,
+                                './assets/imagenes/logo.jpg',
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
