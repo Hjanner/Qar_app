@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:qar/auth/login_screen.dart';
+import 'package:qar/auth/register_user_screen.dart';
 import 'package:qar/screens/outputs/access_records_screen.dart';
 import 'package:qar/screens/outputs/list-vehicles_screen.dart';
-import 'register_screen.dart';
-import 'scan_screen.dart';
+import 'package:qar/screens/register_vehicle_screen.dart';
+import 'package:qar/screens/scan_screen.dart';
+import 'package:qar/models/user_model.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final User user;
+
+  const HomeScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +29,31 @@ class HomeScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
+              // AppBar personalizado con botón de cerrar sesión
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical:  0.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.logout, color: Colors.blue),
+                      onPressed: () {
+                        // Cerrar sesión y redirigir a LoginScreen
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
               // Logo section (30% of screen)
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.4,
+                height: MediaQuery.of(context).size.height * 0.35,
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -49,21 +76,21 @@ class HomeScreen extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Image.asset(
-                                './assets/imagenes/logo.jpg',
+                              './assets/imagenes/logo.jpg',
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      //const SizedBox(height: 5),
                       Text(
-                        'Qar App ',
+                        'Qar App',
                         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.blue.shade700,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 48,
-                        ),                        
-                      ),                                             
+                              color: Colors.blue.shade700,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 48,
+                            ),
+                      ),
                     ],
                   ),
                 ),
@@ -76,79 +103,114 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Scanner Button (más llamativo)
-                      SizedBox(
-                        width: double.infinity,
-                        height: 60,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const QrScannerScreen(),
+                      if (user.role == 'vigilante' || user.role == 'admin')
+                        SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const QrScannerScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue.shade700,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade700,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
+                              elevation: 4,
                             ),
-                            elevation: 4,
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.qr_code_scanner_outlined, size: 28),
-                              SizedBox(width: 12),
-                              Text(
-                                'Escanear',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Register Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 55,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const RegisterScreen(),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.blue.shade700,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(color: Colors.blue.shade700),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.qr_code_scanner_outlined, size: 28),
+                                SizedBox(width: 12),
+                                Text(
+                                  'Escanear',
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
                           ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.person_add_outlined),
-                              SizedBox(width: 12),
-                              Text(
-                                'Registrar Vehículo',
-                                style: TextStyle(fontSize: 16),
+                        ),
+                      const SizedBox(height: 28),
+                      if (user.role == 'admin') ...[
+                        // Botón para registrar vehículos
+                        SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RegisterVehicleScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.blue.shade700,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(color: Colors.blue.shade700),
                               ),
-                            ],
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.directions_car_outlined),
+                                SizedBox(width: 12),
+                                Text(
+                                  'Registrar Vehículo',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 20),
+                        // Botón para registrar usuarios (operadores)
+                        SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RegisterUserScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.blue.shade700,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(color: Colors.blue.shade700),
+                              ),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.person_add_outlined),
+                                SizedBox(width: 12),
+                                Text(
+                                  'Registrar Operador',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
                       const SizedBox(height: 16),
-
-                      // Remaining buttons in a row
                       Row(
                         children: [
                           Expanded(
@@ -175,7 +237,7 @@ class HomeScreen extends StatelessWidget {
                                   children: [
                                     Icon(Icons.directions_car_outlined),
                                     SizedBox(width: 8),
-                                    Text('Vehículos '),
+                                    Text('Vehículos'),
                                   ],
                                 ),
                               ),

@@ -3,14 +3,14 @@
   import '../services/storage_service.dart';
   import 'qr_screen.dart';
 
-  class RegisterScreen extends StatefulWidget {
-    const RegisterScreen({super.key});
+  class RegisterVehicleScreen extends StatefulWidget {
+    const RegisterVehicleScreen({super.key});
 
     @override
-    _RegisterScreenState createState() => _RegisterScreenState();
+    _RegisterVehicleScreenState createState() => _RegisterVehicleScreenState();
   }
 
-  class _RegisterScreenState extends State<RegisterScreen> {
+  class _RegisterVehicleScreenState extends State<RegisterVehicleScreen> {
     final _formKey = GlobalKey<FormState>();
     final _plateNumberController = TextEditingController();
     final _ownerNameController = TextEditingController();
