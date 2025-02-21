@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:qar/models/user_model.dart';
 import '../../models/vehicle_model.dart';
 import '../../services/storage_service.dart';
 import 'vehicle_detail_screen.dart'; // Importar la nueva pantalla
 
 class ListVehiclesScreen extends StatefulWidget {
-  const ListVehiclesScreen({super.key});
+  final User user;
+  const ListVehiclesScreen({super.key, required this.user});
 
   @override
   _ListVehiclesScreenState createState() => _ListVehiclesScreenState();
@@ -14,6 +16,8 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
   List<Vehicle> vehicles = [];
   List<Vehicle> filteredVehicles = [];
   final TextEditingController _searchController = TextEditingController();
+  late final User user;
+
 
   @override
   void initState() {
@@ -167,7 +171,7 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => VehicleDetailScreen(vehicle: vehicle),
+                              builder: (context) => VehicleDetailScreen(vehicle: vehicle, user: widget.user),
                             ),
                           );
                         },

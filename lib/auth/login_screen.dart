@@ -50,116 +50,155 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      appBar: AppBar(
-        title: const Text(
-          'Iniciar Sesión',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: false,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.blue.shade700,
-      ),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Título de la sección
-                Text(
-                  'Ingrese sus credenciales',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade700,
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Campo de usuario
-                _buildTextField(
-                  controller: _usernameController,
-                  label: 'Usuario',
-                  icon: Icons.person_outline,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor ingrese un usuario';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-
-                // Campo de contraseña
-                _buildTextField(
-                  controller: _passwordController,
-                  label: 'Contraseña',
-                  icon: Icons.lock_outline,
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor ingrese una contraseña';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 32),
-
-                // Botón de inicio de sesión
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        final user = await AuthService.login(
-                          _usernameController.text,
-                          _passwordController.text,
-                        );
-                        if (user != null && user.username.isNotEmpty) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeScreen(user: user),
+          child: Column(
+            children: [
+              // Logo y nombre de la app
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.45,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 180,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade100,
+                              blurRadius: 10,
+                              spreadRadius: 3,
                             ),
-                          );
-                        } else {
-                          _showCustomAlert(
-                            'Usuario o contraseña incorrectos',
-                            true,
-                          );
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade700,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      elevation: 4,
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.login, size: 24),
-                        SizedBox(width: 12),
-                        Text(
-                          'Iniciar Sesión',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Image.asset(
+                              './assets/imagenes/logo.jpg',
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Qar App',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 48,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+
+              // Formulario de inicio de sesión
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Título de la sección
+                    Text(
+                      'Ingrese sus credenciales',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Campo de usuario
+                    _buildTextField(
+                    controller: _usernameController,
+                    label: 'Usuario',
+                    icon: Icons.person_outline,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) { // Usamos trim() para eliminar espacios en blanco
+                        return 'Por favor ingrese un usuario';
+                      }
+                      return null;
+                    },
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Campo de contraseña
+                    _buildTextField(
+                      controller: _passwordController,
+                      label: 'Contraseña',
+                      icon: Icons.lock_outline,
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingrese una contraseña';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Botón de inicio de sesión
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          final user = await AuthService.login(
+                            _usernameController.text.trim(),
+                            _passwordController.text.trim(),
+                          );
+                          if (user != null && user.username.isNotEmpty) {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              '/home',
+                              arguments: user, // Pasa el objeto User como argumento
+                            );
+                          } else {
+                            _showCustomAlert(
+                              'Usuario o contraseña incorrectos',
+                              true,
+                            );
+                          }
+                        }
+                      },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade700,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 4,
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.login, size: 24),
+                            SizedBox(width: 12),
+                            Text(
+                              'Iniciar Sesión',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -189,6 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
         controller: controller,
         validator: validator,
         obscureText: obscureText,
+        cursorColor: Colors.blue.shade700, // Color morado para el cursor
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon, color: Colors.blue.shade700),

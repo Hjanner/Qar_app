@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:qar/screens/outputs/accessResultScreen.dart';
+import 'package:qar/models/user_model.dart';
+import 'package:qar/screens/outputs/access_result_screen.dart';
 import 'dart:async';
 import 'dart:convert';
 import '../services/access_record_service.dart';
 import '../models/vehicle_model.dart';
 
 class QrScannerScreen extends StatefulWidget {
-  const QrScannerScreen({super.key});
+  final User user;
+
+  const QrScannerScreen({super.key, required this.user});
 
   @override
   _QrScannerScreenState createState() => _QrScannerScreenState();
@@ -19,6 +22,14 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
   bool isProcessing = false;
   bool isTorchOn = false;
   Timer? _debounceTimer;
+
+  late final User user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = widget.user; // Obtén el objeto User desde el widget
+  }
 
   @override
   void dispose() {
@@ -101,6 +112,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
           builder: (context) => AccessResultScreen(
             isAccessGranted: isRegistered,
             vehicle: isRegistered ? vehicle : null,
+            user: user,
           ),
         ),
       );

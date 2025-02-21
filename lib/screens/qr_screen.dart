@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:qar/models/user_model.dart';
 import '../widgets/vehicle_qr_details .dart';
 import '/models/vehicle_model.dart';
 
 class QrScreen extends StatelessWidget {
   final Vehicle vehicle;
+  final User user;
 
-  const QrScreen({super.key, required this.vehicle});
+  const QrScreen({super.key, required this.vehicle, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,7 @@ class QrScreen extends StatelessWidget {
               Expanded(
                 child: VehicleQrDetails(
                   vehicle: vehicle,
-                  showSaveButton: true,
+                  showSaveButton: true, user: user, 
                 ),
               ),
             ],

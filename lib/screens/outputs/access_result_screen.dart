@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import '/models/vehicle_model.dart';
+import '/models/user_model.dart';
+import '/componets/home_button.dart'; // Importa el widget reutilizable
 
 class AccessResultScreen extends StatelessWidget {
   final bool isAccessGranted;
   final Vehicle? vehicle;
+  final User user; // Añade el parámetro User
 
   const AccessResultScreen({
     super.key,
     required this.isAccessGranted,
     this.vehicle,
+    required this.user, // Requiere un objeto User
   });
 
   @override
@@ -154,13 +158,9 @@ class AccessResultScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: _buildActionButton(
-                        context,
-                        'Ir a Inicio',
-                        Icons.home_outlined,
-                        () => Navigator.pushNamedAndRemoveUntil(
-                            context, '/home', (route) => false),
-                        Colors.grey.shade700,
+                      child: HomeButton(
+                        user: user, // Pasa el objeto User
+                        color: Colors.grey.shade700,
                       ),
                     ),
                   ],

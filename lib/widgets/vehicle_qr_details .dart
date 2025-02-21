@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:qar/models/user_model.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '/models/vehicle_model.dart';
 import '/services/qr_service.dart';
@@ -8,11 +9,14 @@ import '/services/qr_service.dart';
 class VehicleQrDetails extends StatelessWidget {
   final Vehicle vehicle;
   final bool showSaveButton;
+  final User user; // Añade el parámetro User
+
 
   const VehicleQrDetails({
     super.key,
     required this.vehicle,
     this.showSaveButton = true,
+    required this.user,
   });
 
   @override
@@ -70,6 +74,7 @@ class VehicleQrDetails extends StatelessWidget {
                     'Color: ${vehicle.color}',
                     style: const TextStyle(fontSize: 16),
                   ),
+                  const SizedBox(height: 8),
                   if (vehicle.notes != null) Text('Notas: ${vehicle.notes}', style: const TextStyle(fontSize: 16), textAlign: TextAlign.start,),
 
                 ],
@@ -113,7 +118,7 @@ class VehicleQrDetails extends StatelessWidget {
               height: 55,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                  Navigator.pushNamed(context, '/home', arguments: user);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,

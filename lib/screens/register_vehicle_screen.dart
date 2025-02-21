@@ -1,10 +1,12 @@
   import 'package:flutter/material.dart';
+import 'package:qar/models/user_model.dart';
   import '../models/vehicle_model.dart';
   import '../services/storage_service.dart';
   import 'qr_screen.dart';
 
   class RegisterVehicleScreen extends StatefulWidget {
-    const RegisterVehicleScreen({super.key});
+    final User user;
+    const RegisterVehicleScreen({super.key, required this.user});
 
     @override
     _RegisterVehicleScreenState createState() => _RegisterVehicleScreenState();
@@ -165,7 +167,7 @@
                   
                   _buildTextField(
                     controller: _vehicleTypeController,
-                    label: 'Tipo de Vehículo',
+                    label: 'Marca de Vehículo',
                     icon: Icons.directions_car_outlined,
                     validator: _validateVehicleType,
                   ),
@@ -228,7 +230,7 @@
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => QrScreen(vehicle: vehicle),
+                              builder: (context) => QrScreen(vehicle: vehicle, user: widget.user,),
                             ),
                           );
                         }
@@ -286,6 +288,7 @@
           ],
         ),
         child: TextFormField(
+          cursorColor: Colors.blue.shade700,
           controller: controller,
           validator: validator,
           keyboardType: keyboardType,

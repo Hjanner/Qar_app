@@ -86,7 +86,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                   label: 'Usuario',
                   icon: Icons.person_outline,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.trim().isEmpty) {
                       return 'Por favor ingrese un usuario';
                     }
                     return null;
@@ -238,6 +238,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
       child: TextFormField(
         controller: controller,
         validator: validator,
+        cursorColor: Colors.blue.shade700, // Color morado para el cursor
         obscureText: obscureText,
         decoration: InputDecoration(
           labelText: label,
