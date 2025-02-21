@@ -21,7 +21,7 @@ class AccessRecordList extends StatelessWidget {
           title: Text(day),
           children: records.map((record) {
             return ListTile(
-              title: Text('${record.ownerName} - ${record.plateNumber}'),
+              title: Text('${record.ownerName}' + '- ${record.plateNumber}'.toUpperCase()),
               subtitle: Text('Hora: ${record.accessTime.hour}:${record.accessTime.minute}'),
             );
           }).toList(),

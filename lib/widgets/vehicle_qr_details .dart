@@ -50,8 +50,8 @@ class VehicleQrDetails extends StatelessWidget {
                     size: 250.0,
                   ),
                   const SizedBox(height: 20),
-                  Text(
-                    'Placa: ${vehicle.plateNumber}',
+                  Text( 
+                    'Placa: ' + vehicle.plateNumber.toUpperCase(),
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, ),
                   ),
                   const SizedBox(height: 8),

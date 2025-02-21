@@ -152,7 +152,7 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
                       ),
                       child: ListTile(
                         title: Text(
-                          vehicle.plateNumber,
+                          vehicle.plateNumber.toUpperCase(),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.blue.shade900,
