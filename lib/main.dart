@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
 
       child: MaterialApp(
         title: 'Qar App',
-        //debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           fontFamily: 'Quicksand',
           primarySwatch: Colors.blue,

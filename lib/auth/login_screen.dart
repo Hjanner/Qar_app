@@ -13,6 +13,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _obscurePassword = true; // Estado para controlar la visibilidad de la contraseña
 
   void _showCustomAlert(String message, bool isError) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -119,15 +120,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Campo de usuario
                     _buildTextField(
-                    controller: _usernameController,
-                    label: 'Usuario',
-                    icon: Icons.person_outline,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) { // Usamos trim() para eliminar espacios en blanco
-                        return 'Por favor ingrese un usuario';
-                      }
-                      return null;
-                    },
+                      controller: _usernameController,
+                      label: 'Usuario',
+                      icon: Icons.person_outline,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Por favor ingrese un usuario';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
 
@@ -136,13 +137,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _passwordController,
                       label: 'Contraseña',
                       icon: Icons.lock_outline,
-                      obscureText: true,
+                      obscureText: _obscurePassword, // Usar el estado para controlar la visibilidad
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Por favor ingrese una contraseña';
                         }
                         return null;
                       },
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          color: Colors.blue.shade700,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword; // Cambiar el estado
+                          });
+                        },
+                      ),
                     ),
                     const SizedBox(height: 32),
 
@@ -151,26 +163,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: double.infinity,
                       height: 56,
                       child: ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          final user = await AuthService.login(
-                            _usernameController.text.trim(),
-                            _passwordController.text.trim(),
-                          );
-                          if (user != null && user.username.isNotEmpty) {
-                            Navigator.pushReplacementNamed(
-                              context,
-                              '/home',
-                              arguments: user, // Pasa el objeto User como argumento
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            final user = await AuthService.login(
+                              _usernameController.text.trim(),
+                              _passwordController.text.trim(),
                             );
-                          } else {
-                            _showCustomAlert(
-                              'Usuario o contraseña incorrectos',
-                              true,
-                            );
+                            if (user != null && user.username.isNotEmpty) {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                '/home',
+                                arguments: user,
+                              );
+                            } else {
+                              _showCustomAlert(
+                                'Usuario o contraseña incorrectos',
+                                true,
+                              );
+                            }
                           }
-                        }
-                      },
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue.shade700,
                           foregroundColor: Colors.white,
@@ -211,6 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
     required IconData icon,
     String? Function(String?)? validator,
     bool obscureText = false,
+    Widget? suffixIcon,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -228,10 +241,11 @@ class _LoginScreenState extends State<LoginScreen> {
         controller: controller,
         validator: validator,
         obscureText: obscureText,
-        cursorColor: Colors.blue.shade700, // Color morado para el cursor
+        cursorColor: Colors.blue.shade700,
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon, color: Colors.blue.shade700),
+          suffixIcon: suffixIcon, // Agregar el ícono de visibilidad
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
