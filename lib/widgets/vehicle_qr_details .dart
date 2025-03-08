@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:qar/componets/app_button_styles.dart';
 import 'package:qar/models/user_model.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '/models/vehicle_model.dart';
@@ -89,14 +90,7 @@ class VehicleQrDetails extends StatelessWidget {
                 height: 55,
                 child: ElevatedButton(
                   onPressed: () => QrService.saveQrImage(context, vehicle),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade700,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 4,
-                  ),
+                  style: AppButtonStyles.blueWithWhiteText,
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -120,14 +114,7 @@ class VehicleQrDetails extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushNamed(context, '/home', arguments: user);
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.blue.shade700,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    side: BorderSide(color: Colors.blue.shade700),
-                  ),
-                ),
+                style: AppButtonStyles.whiteWithBlueBorder,
                 child: const Text(
                   'Ir a Inicio',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

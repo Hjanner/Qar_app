@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qar/componets/app_button_styles.dart';
 import 'package:qar/services/auth_service.dart';
 import 'package:qar/models/user_model.dart';
 
@@ -184,14 +185,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                         Navigator.pop(context);
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade700,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      elevation: 4,
-                    ),
+                    style: AppButtonStyles.blueWithWhiteText,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

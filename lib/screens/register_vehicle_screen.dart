@@ -1,4 +1,5 @@
   import 'package:flutter/material.dart';
+import 'package:qar/componets/app_button_styles.dart';
 import 'package:qar/models/user_model.dart';
   import '../models/vehicle_model.dart';
   import '../services/storage_service.dart';
@@ -41,9 +42,9 @@ import 'package:qar/models/user_model.dart';
       if (value == null || value.isEmpty) {
         return 'Por favor ingrese el nombre del propietario';
       }
-      if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-        return 'El nombre solo puede contener letras y espacios';
-      }
+    if (!RegExp(r'^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$').hasMatch(value)) {
+      return 'El nombre solo puede contener letras, espacios y caracteres acentuados';
+    }
       return null;
     }
 
@@ -235,14 +236,7 @@ import 'package:qar/models/user_model.dart';
                           );
                         }
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade700,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        elevation: 4,
-                      ),
+                      style: AppButtonStyles.blueWithWhiteText,
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
