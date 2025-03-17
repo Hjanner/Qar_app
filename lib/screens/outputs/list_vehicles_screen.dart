@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qar/models/user_model.dart';
 import '../../models/vehicle_model.dart';
 import '../../services/storage_service.dart';
-import 'vehicle_detail_screen.dart'; // Importar la nueva pantalla
+import 'vehicle_detail_screen.dart'; 
 
 class ListVehiclesScreen extends StatefulWidget {
   final User user;
@@ -16,8 +16,6 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
   List<Vehicle> vehicles = [];
   List<Vehicle> filteredVehicles = [];
   final TextEditingController _searchController = TextEditingController();
-  late final User user;
-
 
   @override
   void initState() {
@@ -47,6 +45,58 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
     });
   }
 
+  Future<void> _deleteVehicle(Vehicle vehicle) async {
+    final vehicles = await StorageService.loadVehicles();
+    vehicles.removeWhere((v) => v.plateNumber == vehicle.plateNumber);
+    await StorageService.saveVehicles(vehicles);
+
+    setState(() {
+      this.vehicles = vehicles;
+      filteredVehicles = vehicles;
+    });
+  }
+
+  Future<void> _showDeleteConfirmationDialog(Vehicle vehicle) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Eliminar Vehículo'),
+          content: Text('¿Estás seguro de que deseas eliminar el vehículo con placa ${vehicle.plateNumber.toUpperCase()}?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el diálogo
+              },
+              child: Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.blue.shade700),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Cerrar el diálogo
+                await _deleteVehicle(vehicle); // Eliminar el vehículo
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Vehículo eliminado: ${vehicle.plateNumber}'),
+                    backgroundColor: Colors.green.shade700,
+                  ),
+                );
+              },
+              child: Text(
+                'Eliminar',
+                style: TextStyle(color: Colors.red.shade700),
+              ),
+            ),
+          ],
+
+          backgroundColor: Colors.white,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +120,7 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.blue[700] ),
+                      icon: Icon(Icons.arrow_back, color: Colors.blue[700]),
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
@@ -85,7 +135,6 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
                   ],
                 ),
               ),
-              //const SizedBox(height: 16),
 
               // Barra de búsqueda
               Padding(
@@ -137,6 +186,7 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
                   itemCount: filteredVehicles.length,
                   itemBuilder: (context, index) {
                     final vehicle = filteredVehicles[index];
+
                     return Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       decoration: BoxDecoration(
@@ -166,6 +216,14 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
                             Text('Tipo: ${vehicle.vehicleType}'),
                           ],
                         ),
+                        trailing: widget.user.role == 'admin'
+                            ? IconButton(
+                                icon: Icon(Icons.delete, color: Colors.red.shade700),
+                                onPressed: () async {
+                                  await _showDeleteConfirmationDialog(vehicle);
+                                },
+                              )
+                            : null,
                         onTap: () {
                           // Navegar a la pantalla de detalles
                           Navigator.push(

@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              // Logo section reutilizable
+              // Logo section 
               LogoSection(),
 
               // Buttons section

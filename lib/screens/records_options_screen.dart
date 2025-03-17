@@ -41,7 +41,7 @@ class RecordsOptionsScreen extends StatelessWidget {
                 ),
               ),
 
-              // Logo section reutilizable
+              // Logo section 
               LogoSection(),
 
               // Botones de Registros

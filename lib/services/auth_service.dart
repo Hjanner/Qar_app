@@ -48,4 +48,10 @@ class AuthService {
       await registerUser(defaultUsers[1]);
     }
   }
+
+  static Future<void> saveUsers(List<User> users) async {
+  final prefs = await SharedPreferences.getInstance();
+  final userListString = users.map((u) => jsonEncode(u.toMap())).toList();
+  await prefs.setStringList(_userListKey, userListString);
+}
 }

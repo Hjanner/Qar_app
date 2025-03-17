@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:qar/componets/app_button_styles.dart';
-import 'package:qar/services/auth_service.dart';
 import 'package:qar/models/user_model.dart';
+import 'package:qar/services/auth_service.dart';
+import 'package:qar/componets/app_button_styles.dart';
 
-class RegisterUserScreen extends StatefulWidget {
-  const RegisterUserScreen({super.key});
+class EditUserScreen extends StatefulWidget {
+  final User user;
+
+  const EditUserScreen({super.key, required this.user});
 
   @override
-  _RegisterUserScreenState createState() => _RegisterUserScreenState();
+  _EditUserScreenState createState() => _EditUserScreenState();
 }
 
-class _RegisterUserScreenState extends State<RegisterUserScreen> {
+class _EditUserScreenState extends State<EditUserScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   String _role = 'vigilante';
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameController.text = widget.user.username;
+    _passwordController.text = widget.user.password;
+    _role = widget.user.role;
+  }
 
   void _showCustomAlert(String message, bool isError) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -48,13 +58,34 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     );
   }
 
+  Future<void> _saveChanges() async {
+    if (_formKey.currentState!.validate()) {
+      final updatedUser = User(
+        username: _usernameController.text,
+        password: _passwordController.text,
+        role: _role,
+      );
+
+      final users = await AuthService.getUsers();
+      final index = users.indexWhere((u) => u.username == widget.user.username);
+      if (index != -1) {
+        users[index] = updatedUser; // Actualizar el usuario en la lista
+        await AuthService.saveUsers(users); // Guardar la lista actualizada
+        _showCustomAlert('Usuario actualizado exitosamente', false);
+        Navigator.pop(context); // Regresar a la pantalla anterior
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool _isObscure = false;
+    
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text(
-          'Registrar Usuario',
+          'Editar Usuario',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: false,
@@ -100,7 +131,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                   controller: _passwordController,
                   label: 'Contraseña',
                   icon: Icons.lock_outline,
-                  obscureText: true,
+                  obscureText: _isObscure,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor ingrese una contraseña';
@@ -133,7 +164,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                     items: ['admin', 'vigilante']
                         .map((role) => DropdownMenuItem(
                               value: role,
-                              child: Text(role),                              
+                              child: Text(role),
                             ))
                         .toList(),
                     decoration: InputDecoration(
@@ -165,34 +196,20 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                // Botón de registro
+                // Botón de guardar cambios
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        final user = User(
-                          username: _usernameController.text,
-                          password: _passwordController.text,
-                          role: _role,
-                        );
-                        await AuthService.registerUser(user);
-                        _showCustomAlert(
-                          'Usuario registrado exitosamente',
-                          false,
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
+                    onPressed: _saveChanges,
                     style: AppButtonStyles.blueWithWhiteText,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.person_add, size: 24),
+                        Icon(Icons.save, size: 24),
                         SizedBox(width: 12),
                         Text(
-                          'Registrar Usuario',
+                          'Guardar Cambios',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

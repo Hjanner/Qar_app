@@ -48,7 +48,7 @@ class QrScreen extends StatelessWidget {
               ),
               //const SizedBox(height: 20),
 
-              // Widget reutilizable
+              // Widget reutilizable para generar qr
               Expanded(
                 child: VehicleQrDetails(
                   vehicle: vehicle,

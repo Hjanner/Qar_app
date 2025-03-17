@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qar/componets/app_button_styles.dart';
 import 'package:qar/services/auth_service.dart';
-import 'package:qar/screens/home_screen.dart';
+import 'package:qar/widgets/logo_secction.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,49 +58,8 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: [
               // Logo y nombre de la app
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.45,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 180,
-                        height: 180,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade100,
-                              blurRadius: 10,
-                              spreadRadius: 3,
-                            ),
-                          ],
-                        ),
-                        child: ClipOval(
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Image.asset(
-                              './assets/imagenes/logo.jpg',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Qar App',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.blue.shade700,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 48,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              const SizedBox(height: 80),
+              LogoSection(),
 
               // Formulario de inicio de sesión
               Form(

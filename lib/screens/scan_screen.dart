@@ -197,6 +197,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                 //borderRadius: BorderRadius.circular(20),
                 child: Stack(
                   children: [
+                    //aca funciona la magia
                     MobileScanner(
                       controller: cameraController,
                       onDetect: _onDetect,
