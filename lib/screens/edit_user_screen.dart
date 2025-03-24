@@ -121,6 +121,18 @@ class _EditUserScreenState extends State<EditUserScreen> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Por favor ingrese un usuario';
                     }
+                    
+                    // Validar que sea un nombre completo (al menos 2 palabras)
+                    final parts = value.trim().split(' ');
+                    if (parts.length < 2) {
+                      return 'Ingrese nombre y apellido';
+                    }
+                    
+                    // Validar caracteres permitidos (letras españolas y espacios)
+                    if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$').hasMatch(value)) {
+                      return 'Solo se permiten letras del alfabeto español';
+                    }
+                    
                     return null;
                   },
                 ),

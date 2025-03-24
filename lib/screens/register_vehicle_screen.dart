@@ -28,15 +28,21 @@ import 'package:qar/models/user_model.dart';
       return !vehicles.any((vehicle) => vehicle.plateNumber == plateNumber);
     }
 
-    String? _validatePlateNumber(String? value) {
-      if (value == null || value.isEmpty) {
-        return 'Por favor ingrese el número de placa';
-      }
-      if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
-        return 'La placa solo puede contener letras y números';
-      }
-      return null;
+  String? _validatePlateNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingrese el número de placa';
     }
+    
+    // Eliminar espacios y convertir a mayúsculas
+    final plate = value.replaceAll(' ', '').toUpperCase();
+    
+    // Validar formato: 4 letras (primera mayúscula) + 4 números
+    if (!RegExp(r'^[A-Z]{4}\d{4}$').hasMatch(plate)) {
+      return 'Formato inválido. Debe ser: 4 letras + 4 números (ej: ABCD1234)';
+    }
+    
+    return null;
+  }
 
     String? _validateOwnerName(String? value) {
       if (value == null || value.isEmpty) {
@@ -71,6 +77,10 @@ import 'package:qar/models/user_model.dart';
     String? _validateColor(String? value) {
       if (value == null || value.isEmpty) {
         return 'Por favor ingrese el color del vehículo';
+      }
+
+      if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$').hasMatch(value)) {
+        return 'Solo se permiten letras del alfabeto español';
       }
       return null;
     }
